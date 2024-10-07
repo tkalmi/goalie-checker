@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from urllib import request
 
-url = "https://www.dailyfaceoff.com/starting-goalies/"
+url = "https://www.dailyfaceoff.com/starting-goalies"
 
 req = request.Request(url, headers={"User-Agent": "Not a bot ;)"})
 try:
@@ -11,26 +11,21 @@ except Exception as e:
 
 soup = BeautifulSoup(page, "html.parser")
 
-main_heading = soup.find("h1", attrs={"class": "heading"}).text.strip()
+main_heading = soup.find("h1").text.strip()
 
 
 print(main_heading)
 print()
-goalie_cards = soup.find_all("div", attrs={"class": "starting-goalies-card"})
-
-for card in goalie_cards:
-    game_heading = card.h4.text.strip()
+games = soup.find_all("article")
+for game in games:
+    game_heading = game.div.span.text.strip()
     print(game_heading)
-
-    away_goalie_name = card.select(".away-goalie .meta-row h4")[0].text.strip()
-    away_goalie_strength = (
-        card.select(".away-goalie .news-strength")[0].get_text().strip()
-    )
-    print("%s: %s" % (away_goalie_name, away_goalie_strength))
-
-    home_goalie_name = card.select(".home-goalie .meta-row h4")[0].text.strip()
-    home_goalie_strength = (
-        card.select(".home-goalie .news-strength")[0].get_text().strip()
-    )
-    print("%s: %s" % (home_goalie_name, home_goalie_strength))
-    print()
+    goalies = game.select("& > div:nth-of-type(2) > div > div > div:nth-of-type(2)")
+    for goalie in goalies:
+        goalie_name = goalie.div.span.text.strip()
+        goalie_strength = (
+            goalie.select("& > div:nth-of-type(2) > div > span:last-of-type")[0]
+            .get_text()
+            .strip()
+        )
+        print("%s: %s" % (goalie_name, goalie_strength))
