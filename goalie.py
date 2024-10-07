@@ -29,3 +29,4 @@ for game in games:
             .strip()
         )
         print("%s: %s" % (goalie_name, goalie_strength))
+        print()
